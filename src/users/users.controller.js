@@ -18,6 +18,7 @@ export const getAllUsers = async (req, res, next) => {
   }
 };
 
+//CREATE a user
 export const createUser = async (req, res, next) => {
   try {
     const { name, age } = req.body;
@@ -27,6 +28,28 @@ export const createUser = async (req, res, next) => {
       [name, age]
     );
     res.status(201).json(result.rows[0]);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//UPDATE /users/:id -> update a user by id
+export const updateUser = async (req, res, next) => {
+  try {
+    const { id } = req.params; // id form URL
+    const { name, age } = req.body; //new info from body
+
+    const result = await pool.query(
+      "UPDATE users SET name = $1, age = $2 WHERE id = $3 RETURNING *",
+      [name, age, id]
+    );
+
+    if (result.rows.length === 0) {
+      //if there is no id, user not found
+      return res.status(404).json({ error: "user not found" });
+    }
+
+    res.json(result.rows[0]);
   } catch (err) {
     next(err);
   }
