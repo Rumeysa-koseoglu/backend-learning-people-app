@@ -3,13 +3,16 @@
 // we connect to the main application by calling app.use("/users", usersRouter) within index.js
 
 import { Router } from "express"; // we will define subpaths with express.Router
-import { getAllUsers } from "./users.controller.js";
+import { createUser, getAllUsers } from "./users.controller.js";
 
 const router = Router(); //create a new router
 
 //GET /users -> list all users
 // it will work when we call http://localhost:50001/users from browser
 router.get("/", getAllUsers);
+
+//POST /users -> add a new user
+router.post("/", createUser);
 
 //we export "router" by default from this file
 // index.js will import this file and put it in the "/users" path

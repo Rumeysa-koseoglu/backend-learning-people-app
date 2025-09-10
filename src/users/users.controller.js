@@ -1,6 +1,6 @@
 // Controller = Layer of "work logic" + "connection with DB"
 // Route knows "which address", and Controller knows "what we going to do"
-import { pool } from "./db/pool.js";
+import { pool } from "../db/pool.js";
 
 //GET /users -> get all users
 // this function is async because it requires a round trip to the DB
@@ -23,7 +23,8 @@ export const createUser = async (req, res, next) => {
     const { name, age } = req.body;
 
     const result = await pool.query(
-      "INSERT INTO users (name, age) VALUES ($1, $2) RETURNING *"[(name, age)]
+      "INSERT INTO users (name, age) VALUES ($1, $2) RETURNING *",
+      [name, age]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
