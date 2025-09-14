@@ -35,6 +35,16 @@ function App() {
     setAge("");
   };
 
+  //delete user function
+  const handleDelete = async (id) => {
+    await fetch(`http://localhost:5001/users/${id}`, {
+      method: "DELETE",
+    });
+
+    //filter: just leave the ones with the different IDs
+    setUsers(users.filter((u) => u.id !== id));
+  };
+
   return (
     <div className="container">
       <h1>USERS</h1>
@@ -62,6 +72,9 @@ function App() {
         {users.map((u) => (
           <li key={u.id}>
             {u.name} ({u.age})
+            <button className="cln-btn" onClick={() => handleDelete(u.id)}>
+              delete
+            </button>
           </li>
         ))}
       </ul>
