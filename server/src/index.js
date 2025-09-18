@@ -7,6 +7,10 @@ import dotenv from "dotenv"; // to read .env file
 dotenv.config(); //load .env content into process.env
 import { pool } from "./db/pool.js"; // DB connection pool
 
+import usersRouter from "./users/users.routes.js";
+import { notFound } from "./middlewares/notFound.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+
 const app = express(); //create express app
 const PORT = 5001;
 
@@ -16,8 +20,7 @@ app.use(cors());
 //To read requests with json body (converts to req.body)
 app.use(express.json());
 
-import usersRouter from "./users/users.routes.js";
-
+//--routes--
 app.use("/users", usersRouter);
 
 //--simple health check--
@@ -41,6 +44,10 @@ app.get("/db-check", async (req, res) => {
   }
 });
 
+//--middlewares (must be after routes)--
+app.use(notFound);
+app.use(errorHandler);
+
 //--start server--
 // we listen to the port with app.listen; if successful, callback works
 app.listen(PORT, () => {
@@ -49,9 +56,3 @@ app.listen(PORT, () => {
 
 //notes: if you use nodemon with "npm run dev"; when you save the file server will restart automatically
 //"npm start" works only with node. so manual on/off required for any changes
-
-//error handler middleware
-app.use((err, req, res, next) => {
-  console.error("Error middleware:", err.message);
-  res.status(500).json({ error: err.message });
-});
